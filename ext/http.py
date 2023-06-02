@@ -14,8 +14,8 @@ class Http:
             },
             # //////////////////////////////////////////////////////////////////////////////////////
             "rock": {
-                "random": lambda: self.get("https://mrconos.pythonanywhere.com/rock/random", _json=True),
-                "top": lambda: self.get("https://mrconos.pythonanywhere.com/rock/top"),
+                "random": lambda: self.get("https://rockapi.apiworks.tech/random", _json=True),
+                "top": lambda: self.get("https://rockapi.apiworks.tech/top"),
             },
             "numbers": {
                 "random": lambda _type="trivia": self.api["numbers"]["random_"+_type](),
@@ -39,7 +39,7 @@ class Http:
                 ),
             },
             "meme-api": {
-                "gimme": lambda: self.get("https://meme-api.herokuapp.com/gimme", _json=True)
+                "gimme": lambda: self.get("https://meme-api.com/gimme/", _json=True)
             },
             "some-random-api": {
                 "bottoken": lambda: self.get("https://some-random-api.ml/bottoken", _json=True),
