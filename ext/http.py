@@ -14,8 +14,8 @@ class Http:
             },
             # //////////////////////////////////////////////////////////////////////////////////////
             "rock": {
-                "random": lambda: self.get("https://rockapi.apiworks.tech/random", _json=True),
-                "top": lambda: self.get("https://rockapi.apiworks.tech/top"),
+                "random": lambda: self.get("https://rockapi.apiworks.tech/rock/random", _json=True),
+                "top": lambda: self.get("https://rockapi.apiworks.tech/rock/top"),
             },
             "numbers": {
                 "random": lambda _type="trivia": self.api["numbers"]["random_"+_type](),
