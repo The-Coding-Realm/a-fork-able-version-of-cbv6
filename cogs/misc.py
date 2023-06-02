@@ -19,10 +19,9 @@ if TYPE_CHECKING:
     from ext.models import CodingBot
 
 
-
 class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
-
     hidden = False
+
     def __init__(self, bot: CodingBot) -> None:
         self.bot = bot
         self.http = Http(bot.session)
@@ -36,7 +35,11 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
         await ctx.send("Please use commands in the server instead of dms")
         return False
 
-    @commands.hybrid_command(name='retry', aliases=['re'], help="Re-execute a command by replying to a message")
+    @commands.hybrid_command(
+        name="retry",
+        aliases=["re"],
+        help="Re-execute a command by replying to a message",
+    )
     async def retry(self, ctx: commands.Context[CodingBot]):
         """
         Reinvoke a command, running it again. This does NOT bypass any permissions checks | Code from v4
@@ -44,17 +47,21 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
         try:
             message = await ctx.channel.fetch_message(ctx.message.reference.message_id)
         except discord.errors.NotFound:
-            return await ctx.send('I couldn\'t find that message')
+            return await ctx.send("I couldn't find that message")
         if message.author == ctx.author:
-            await ctx.message.add_reaction('\U00002705')
+            await ctx.message.add_reaction("\U00002705")
             context = await self.bot.get_context(message)
             await self.bot.invoke(context)
         else:
-            await ctx.send(embed='That isn\'t your message')
-    
-    @commands.hybrid_command(name="afk", aliases = ["afk-set", "set-afk"], help = "Sets your afk")
+            await ctx.send(embed="That isn't your message")
+
+    @commands.hybrid_command(
+        name="afk", aliases=["afk-set", "set-afk"], help="Sets your afk"
+    )
     @commands.cooldown(1, 10, commands.BucketType.member)
-    async def afk(self, ctx: commands.Context[CodingBot], *, reason: Optional[str] = None):
+    async def afk(
+        self, ctx: commands.Context[CodingBot], *, reason: Optional[str] = None
+    ):
         """
         Set your afk status.
 
@@ -70,7 +77,9 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
             reason = "AFK"
         member = ctx.author
         staff_role = ctx.guild.get_role(795145820210462771)
-        on_pat_staff = member.guild.get_role(726441123966484600) # "on_patrol_staff" role
+        on_pat_staff = member.guild.get_role(
+            726441123966484600
+        )  # "on_patrol_staff" role
 
         if staff_role in member.roles:
             try:
@@ -81,31 +90,34 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
             self.bot.afk_cache[ctx.guild.id] = {}
         if member.id not in self.bot.afk_cache.get(ctx.guild.id):
             await self.bot.conn.insert_record(
-                'afk',
-                table='afk',
+                "afk",
+                table="afk",
                 values=(member.id, reason, int(ctx.message.created_at.timestamp())),
-                columns=['user_id', 'reason', 'afk_time']
+                columns=["user_id", "reason", "afk_time"],
             )
             try:
                 await member.edit(nick=f"[AFK] {member.display_name}")
             except:
                 pass
             try:
-                self.bot.afk_cache[ctx.guild.id][member.id] = (reason, int(ctx.message.created_at.timestamp()))
+                self.bot.afk_cache[ctx.guild.id][member.id] = (
+                    reason,
+                    int(ctx.message.created_at.timestamp()),
+                )
             except KeyError:
-                self.bot.afk_cache[ctx.guild.id] = {member.id: (reason, int(ctx.message.created_at.timestamp()))}
+                self.bot.afk_cache[ctx.guild.id] = {
+                    member.id: (reason, int(ctx.message.created_at.timestamp()))
+                }
             embed = discord.Embed(
                 description=f"{ctx.author.mention} I set your AFK: {reason}",
-                color=discord.Color.blue()
+                color=discord.Color.blue(),
             )
             await ctx.reply(embed=embed)
         else:
             embed = discord.Embed(
-                description=" You are already AFK",
-                color=discord.Color.brand_red()
+                description=" You are already AFK", color=discord.Color.brand_red()
             )
             await ctx.reply(embed=embed, ephemeral=True)
-
 
     @commands.command()
     async def run(self, ctx, *, codeblock: str):
@@ -123,15 +135,11 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
         lang = matches[0][0] or matches[0][1]
         if not matches:
             return await msg.edit(
-                embed=await self.bot.embed(
-                    title="```ansi\nInvalid codeblock\n```"
-                )
+                embed=await self.bot.embed(title="```ansi\nInvalid codeblock\n```")
             )
         if not lang:
             return await msg.edit(
-                embed=await self.bot.embed(
-                    title="```ansi\nno language specified\n```"
-                )
+                embed=await self.bot.embed(title="```ansi\nno language specified\n```")
             )
         code = matches[0][2]
         await msg.edit(
@@ -148,11 +156,11 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
     @commands.cooldown(1, 10, commands.BucketType.member)
     async def thanks(self, ctx: commands.Context[CodingBot], member: discord.Member):
         record = await self.bot.conn.select_record(
-            'thanks',
-            table='thanks_info',
-            arguments=('thanks_count',),
-            where=['guild_id', 'user_id'],
-            values=[ctx.guild.id, member.id]
+            "thanks",
+            table="thanks_info",
+            arguments=("thanks_count",),
+            where=["guild_id", "user_id"],
+            values=[ctx.guild.id, member.id],
         )
         if not record:
             return await ctx.send(f"{member.display_name} does not have any thanks")
@@ -161,7 +169,9 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
 
     @commands.hybrid_group(name="thank", invoke_without_command=True)
     @commands.cooldown(1, 10, commands.BucketType.member)
-    async def thank(self, ctx: commands.Context[CodingBot], member: discord.Member, *, reason: str):
+    async def thank(
+        self, ctx: commands.Context[CodingBot], member: discord.Member, *, reason: str
+    ):
         """
         Thank someone.
 
@@ -175,55 +185,79 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
 
         elif member.id == self.bot.user.id:
             return await ctx.reply("You can't thank me.", ephemeral=True)
-        
+
         await self.bot.conn.insert_record(
-            'thanks',
-            table='thanks_info',
+            "thanks",
+            table="thanks_info",
             values=(member.id, ctx.guild.id, 1),
-            columns=['user_id', 'guild_id', 'thanks_count'],
-            extras=['ON CONFLICT (user_id) DO UPDATE SET thanks_count = thanks_count + 1']
+            columns=["user_id", "guild_id", "thanks_count"],
+            extras=[
+                "ON CONFLICT (user_id) DO UPDATE SET thanks_count = thanks_count + 1"
+            ],
         )
         staff_role = ctx.guild.get_role(795145820210462771)
         member_is_staff = 1 if staff_role and staff_role in member.roles else 0
         characters = string.ascii_letters + string.digits
         await self.bot.conn.insert_record(
-            'thanks',
-            table='thanks_data',
+            "thanks",
+            table="thanks_data",
             columns=(
-                'is_staff', 'user_id', 'giver_id', 'guild_id', 
-                'message_id', 'channel_id', 'reason', 'thank_id',
-                'date'
+                "is_staff",
+                "user_id",
+                "giver_id",
+                "guild_id",
+                "message_id",
+                "channel_id",
+                "reason",
+                "thank_id",
+                "date",
             ),
-            values=(member_is_staff, member.id, ctx.author.id, ctx.guild.id, 
-                ctx.message.id, ctx.channel.id, reason or "No reason given", 
-                "". join(random.choice(characters) for _ in range(7)), 
-                int(ctx.message.created_at.timestamp())
-            )
+            values=(
+                member_is_staff,
+                member.id,
+                ctx.author.id,
+                ctx.guild.id,
+                ctx.message.id,
+                ctx.channel.id,
+                reason or "No reason given",
+                "".join(random.choice(characters) for _ in range(7)),
+                int(ctx.message.created_at.timestamp()),
+            ),
         )
-        await ctx.reply(f"{ctx.author.mention} you thanked {member.mention}!", ephemeral=True)
+        await ctx.reply(
+            f"{ctx.author.mention} you thanked {member.mention}!", ephemeral=True
+        )
 
     @thank.command(name="show")
     @commands.has_any_role(783909939311280129, 797688360806121522)
-    async def thank_show(self, ctx: commands.Context[CodingBot], member: discord.Member):
+    async def thank_show(
+        self, ctx: commands.Context[CodingBot], member: discord.Member
+    ):
         records = await self.bot.conn.select_record(
-            'thanks',
-            table='thanks_data',
+            "thanks",
+            table="thanks_data",
             arguments=(
-                'giver_id', 'message_id','channel_id','reason','thank_id',
-                'date'
-                ),
-            where=['user_id'],
-            values=[member.id]
+                "giver_id",
+                "message_id",
+                "channel_id",
+                "reason",
+                "thank_id",
+                "date",
+            ),
+            where=["user_id"],
+            values=[member.id],
         )
 
         if not records:
-            return await ctx.reply(f"{member.mention} does not have any thanks.", ephemeral=True)
+            return await ctx.reply(
+                f"{member.mention} does not have any thanks.", ephemeral=True
+            )
 
         information = tuple(grouper(5, records))
 
         embeds = []
         for info in information:
-            embed = discord.Embed(title=f'Showing {member.display_name}\'s data')
+            embed = discord.Embed(title=f"Showing {member.display_name}'s data")
             for data in info:
                 giver_id = data.giver_id
                 msg_id = data.message_id
@@ -232,11 +266,17 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
                 thank_id = data.thank_id
                 timestamp = data.date
                 channel = ctx.guild.get_channel(channel_id)
-                msg_link = f'https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg_id}'
+                msg_link = (
+                    f"https://discord.com/channels/{ctx.guild.id}/{channel.id}/{msg_id}"
+                )
 
                 giver = ctx.guild.get_member(giver_id)
 
-                embed.add_field(name=f'Thank: {thank_id}', value=f"Thank giver: {giver.mention}\nDate: <t:{timestamp}:R>\nReason: {reason}\nThank given in: {channel.mention}\nMessage link: [Click here!]({msg_link})", inline=False)
+                embed.add_field(
+                    name=f"Thank: {thank_id}",
+                    value=f"Thank giver: {giver.mention}\nDate: <t:{timestamp}:R>\nReason: {reason}\nThank given in: {channel.mention}\nMessage link: [Click here!]({msg_link})",
+                    inline=False,
+                )
 
             embeds.append(embed)
 
@@ -249,16 +289,15 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
             paginator.add_button("next", emoji="▶️")
             await paginator.start()
 
-
     @thank.command(name="delete")
-    @commands.has_any_role(783909939311280129, 797688360806121522) 
+    @commands.has_any_role(783909939311280129, 797688360806121522)
     async def thank_delete(self, ctx: commands.Context[CodingBot], thank_id: str):
         record = await self.bot.conn.select_record(
-            'thanks',
-            table='thanks_data',
-            arguments=['user_id'],
-            where=['thank_id'],
-            values=[thank_id]
+            "thanks",
+            table="thanks_data",
+            arguments=["user_id"],
+            where=["thank_id"],
+            values=[thank_id],
         )
         if not record:
             return await ctx.send("No thank with that id")
@@ -266,22 +305,21 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
         user_id = record[0].user_id
 
         await self.bot.conn.delete_record(
-            'thanks',
-            table='thanks_data',
-            where=['thank_id'],
-            values=[thank_id]
+            "thanks", table="thanks_data", where=["thank_id"], values=[thank_id]
         )
 
         await self.bot.conn.insert_record(
-            'thanks',
-            table='thanks_info',
+            "thanks",
+            table="thanks_info",
             values=(user_id, ctx.guild.id, -1),
-            columns=['user_id', 'guild_id', 'thanks_count'],
-            extras=['ON CONFLICT (user_id) DO UPDATE SET thanks_count = thanks_count - 1']
+            columns=["user_id", "guild_id", "thanks_count"],
+            extras=[
+                "ON CONFLICT (user_id) DO UPDATE SET thanks_count = thanks_count - 1"
+            ],
         )
         await ctx.send(f"Remove thank from <@{user_id}> with id {thank_id}")
 
-    @thank.command(name="leaderboard", aliases=['lb'])
+    @thank.command(name="leaderboard", aliases=["lb"])
     async def thank_leaderboard(self, ctx: commands.Context[CodingBot]):
         """
         Shows the thanks leaderboard.
@@ -291,14 +329,13 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
         `{prefix}thanks leaderboard`: *will show the thanks leaderboard*
         """
 
-
         records = await self.bot.conn.select_record(
-            'thanks',
-            table='thanks_info',
-            arguments=('user_id', 'thanks_count'),
-            where=['guild_id'],
+            "thanks",
+            table="thanks_info",
+            arguments=("user_id", "thanks_count"),
+            where=["guild_id"],
             values=[ctx.guild.id],
-            extras=['ORDER BY thanks_count DESC, user_id ASC LIMIT 100'],
+            extras=["ORDER BY thanks_count DESC, user_id ASC LIMIT 100"],
         )
         if not records:
             return await ctx.reply("No thanks leaderboard yet.", ephemeral=True)
@@ -311,29 +348,33 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
             embed = discord.Embed(
                 title=f"Thank points leaderboard",
                 description="\n\n".join(
-                    [f"`{i}{ordinal_suffix_of(i)}` is {user.mention} with `{thanks_count.thanks_count}` Thank point(s)" for i, (user, thanks_count) 
-                    in enumerate(zip(user, info), 1)
-                ]
+                    [
+                        f"`{i}{ordinal_suffix_of(i)}` is {user.mention} with `{thanks_count.thanks_count}` Thank point(s)"
+                        for i, (user, thanks_count) in enumerate(zip(user, info), 1)
+                    ]
                 ),
-                color=discord.Color.blue()
+                color=discord.Color.blue(),
             )
             embeds.append(embed)
         if len(embeds) == 1:
             paginator = pg.Paginator(self.bot, embeds, ctx)
-            paginator.add_button("delete", label="Delete", style=discord.ButtonStyle.danger)
+            paginator.add_button(
+                "delete", label="Delete", style=discord.ButtonStyle.danger
+            )
             await paginator.start()
         else:
             paginator = pg.Paginator(self.bot, embeds, ctx)
             paginator.add_button("back", emoji="◀️")
             paginator.add_button("goto", style=discord.ButtonStyle.primary)
             paginator.add_button("next", emoji="▶️")
-            paginator.add_button("delete", label="Delete", style=discord.ButtonStyle.danger)
+            paginator.add_button(
+                "delete", label="Delete", style=discord.ButtonStyle.danger
+            )
             await paginator.start()
-
 
     @commands.hybrid_group(invoke_without_command=True)
     async def trainee(self, ctx: commands.Context[CodingBot]):
-        await ctx.send_help('trainee')
+        await ctx.send_help("trainee")
 
     @trainee.command(name="list")
     @commands.cooldown(1, 10, commands.BucketType.member)
@@ -348,7 +389,7 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
 
         trainee_role = ctx.guild.get_role(729537643951554583)  # type: ignore
         members = trainee_role.members
-        
+
         if not members:
             trainees = "No trainees yet."
         else:
@@ -356,9 +397,7 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
                 f"{i}. {member.mention}" for i, member in enumerate(members, 1)
             )
         embed = discord.Embed(
-            title=f"Trainees list",
-            description=trainees,
-            color=discord.Color.blue()
+            title=f"Trainees list", description=trainees, color=discord.Color.blue()
         )
         await self.bot.reply(ctx, embed=embed)
 
@@ -373,7 +412,7 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
     #             return await ctx.reply(f"You are currently not listening to spotify!", mention_author=False)
     #         return await self.bot.reply(
     #             ctx,
-    #             f"{member.mention} is not listening to Spotify", 
+    #             f"{member.mention} is not listening to Spotify",
     #             mention_author=False,
     #             allowed_mentions=discord.AllowedMentions(users=False)
     #         )
@@ -392,7 +431,7 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
     #             'Please provide image/video url, '
     #             'reply to another message or upload the image/video along with the command. '
     #             f'Please use {ctx.prefix}help saucefor more information.')
-        
+
     #     anime_information = await find_anime_source(self.bot.session, source)
 
     #     result = anime_information['result']
@@ -402,7 +441,7 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
     #         )
     #     else:
     #         result = result[0]
-            
+
     #     print(ctx.channel.is_nsfw())
     #     print(result['anilist'].get('isAdult'))
 
@@ -411,7 +450,7 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
     #             'This source is marked as adult content and can only be used in NSFW channels. I Will try to DM you instead.'
     #         )
     #         ctx = ctx.author
-    
+
     #     browser = "https://trace.moe/?url={}".format(source)
 
     #     anilist_id = result['anilist']['id']
@@ -430,11 +469,11 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
 
     #     from_timestamp = timedelta(seconds=int(result['from']))
     #     to_timestamp = timedelta(seconds=int(result['to']))
-        
+
     #     embed = discord.Embed(timestamp=discord.utils.utcnow())
     #     embed.add_field(
-    #         name="Anime Title", 
-    #         value=f"Native: {native}\nEnglish: {english}\nRomaji: {romaji}", 
+    #         name="Anime Title",
+    #         value=f"Native: {native}\nEnglish: {english}\nRomaji: {romaji}",
     #         inline=False
     #     )
     #     embed.add_field(
@@ -456,6 +495,6 @@ class Miscellaneous(commands.Cog, command_attrs=dict(hidden=False)):
     #     except (discord.HTTPException, discord.Forbidden):
     #         pass
 
-            
+
 async def setup(bot: CodingBot):
     await bot.add_cog(Miscellaneous(bot))

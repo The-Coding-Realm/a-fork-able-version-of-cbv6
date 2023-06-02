@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import time
@@ -46,13 +45,9 @@ class Rocks(discord.ui.View):
             elif child.custom_id == "next":
                 if self.page + 1 < len(self.pages):
                     child.Style = discord.ButtonStyle.gray
-        return await interaction.response.edit_message(
-            embed=data[0], view=self
-        )
+        return await interaction.response.edit_message(embed=data[0], view=self)
 
-    @discord.ui.button(
-        label=">", custom_id="next", style=discord.ButtonStyle.green
-    )
+    @discord.ui.button(label=">", custom_id="next", style=discord.ButtonStyle.green)
     async def next_rock(self, interaction, button):
         if self.page + 1 == len(self.pages):
             button.Style = discord.ButtonStyle.green
@@ -72,16 +67,14 @@ class Rocks(discord.ui.View):
 
 
 class Piston(discord.ui.View):
-    
     def __init__(
-        self, 
-        cog: commands.Cog, 
-        code: str, 
-        language: str, 
+        self,
+        cog: commands.Cog,
+        code: str,
+        language: str,
         message: discord.Message,
-        author: discord.Member
+        author: discord.Member,
     ) -> None:
-
         self.code = code
         self.lang = language
         self.cog = cog
@@ -118,9 +111,7 @@ class Piston(discord.ui.View):
             return await self.msg.edit(
                 embed=await self.cog.bot.embed(
                     title=" ",
-                    description="```ansi\n[1;31m{}\n```".format(
-                        self.res["message"]
-                    ),
+                    description="```ansi\n[1;31m{}\n```".format(self.res["message"]),
                 )
             )
         lines = self.res["output"].split("\n")
@@ -172,10 +163,7 @@ class Piston(discord.ui.View):
         )
 
     @ui.button(
-        label="...",
-        custom_id="info",
-        style=discord.ButtonStyle.gray,
-        disabled=True
+        label="...", custom_id="info", style=discord.ButtonStyle.gray, disabled=True
     )
     async def _info(self, interaction: discord.Interaction, button: discord.Button):
         pass
@@ -201,7 +189,9 @@ class Piston(discord.ui.View):
             self.page -= 1
         return
 
-    @ui.button(label="Delete", custom_id="delete", style=discord.ButtonStyle.danger, row=2)
+    @ui.button(
+        label="Delete", custom_id="delete", style=discord.ButtonStyle.danger, row=2
+    )
     async def _delete(self, interaction: discord.Interaction, button: discord.Button):
         self.stop()
         await self.msg.delete()
@@ -210,7 +200,8 @@ class Piston(discord.ui.View):
         if interaction.author == self.author:
             return True
         return False
-        
+
+
 class ConfirmButton(ui.View):
     if TYPE_CHECKING:
         message: discord.Message
@@ -223,7 +214,9 @@ class ConfirmButton(ui.View):
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if self.ctx.author.id != interaction.user.id:
-            await interaction.response.send_message("This is not your button.", ephemeral=True)
+            await interaction.response.send_message(
+                "This is not your button.", ephemeral=True
+            )
             return False
         return True
 
@@ -231,7 +224,7 @@ class ConfirmButton(ui.View):
         if self.message:
             return await self.message.delete()
 
-    @ui.button(label='Yes', style=discord.ButtonStyle.green)
+    @ui.button(label="Yes", style=discord.ButtonStyle.green)
     async def confirm(
         self,
         interaction: discord.Interaction,
@@ -244,7 +237,7 @@ class ConfirmButton(ui.View):
             await interaction.delete_original_message()
         self.stop()
 
-    @ui.button(label='No', style=discord.ButtonStyle.red)
+    @ui.button(label="No", style=discord.ButtonStyle.red)
     async def cancel(
         self,
         interaction: discord.Interaction,
