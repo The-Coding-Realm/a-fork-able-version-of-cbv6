@@ -90,7 +90,7 @@ class ListenerCog(commands.Cog, command_attrs=dict(hidden=True)):
             for member in message.mentions:
                 record = self.bot.afk_cache.get(message.guild.id)
                 if record:
-                    record = record.get(message.author.id)
+                    record = record.get(member.id)
                     if record:
                         reason, time_ = record
                         em = discord.Embed(
