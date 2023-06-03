@@ -58,13 +58,7 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
         rock_info = await get_rock(self)
         return await self.bot.reply(
             ctx,
-            embed=rock_info[0],
-            view=Rocks(
-                cog=self,
-                embed_gen=get_rock,
-                stars=rock_info[1],
-                embed=rock_info[0],
-            ),
+            embed=rock_info,
         )
 
     @commands.hybrid_command()
@@ -167,14 +161,16 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
     @commands.hybrid_command(name="token")
     async def token(self, ctx: commands.Context[CodingBot]):
         first_string = ctx.author.id
+        middle_string = random.randint(0, 100)
         last_string = random.randint(1000000000,9999999999)
 
-        token1 = base64.b64encode(f"{first_string}".encode("utf-8")).decode("utf-8")
-        token2 = base64.b64encode(f"{last_string}".encode("utf-8")).decode("utf-8")
+        token_part1 = base64.b64encode(f"{first_string}".encode("utf-8")).decode("utf-8")
+        token_part2 = base64.b64encode(f"{middle_string}".encode("utf-8")).decode("utf-8")
+        token_part3 = base64.b64encode(f"{last_string}".encode("utf-8")).decode("utf-8")
 
-        final_token = f"{token1}.{token2}"
+        final_token = f"{token_part1}.{token_part2}.{token_part3}"
 
-        embed = discord.Embed(title="Ha ha ha, I grabbed your bot token.", description=final_token, color=discord.Color.random())
+        embed = discord.Embed(title="Ha ha ha, I grabbed your token.", description=final_token, color=discord.Color.random())
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
         await self.bot.reply(ctx, embed=embed)
 
