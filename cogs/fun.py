@@ -112,6 +112,13 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
 
     @commands.hybrid_command(name="joke")
     async def joke(self, ctx: commands.Context[CodingBot]):
+        """
+        Tells a programming joke
+
+        Usage:
+        ------
+        `{prefix}joke`: *will get a random joke*
+        """
         joke_json = await self.http.api["get"]["joke"]["api"]()
         
         parts = joke_json['type']
