@@ -190,7 +190,7 @@ class WelcomeBanner:
             if vanity:
                 invite = vanity
                 if len(invite.code) > 7:
-                    invite.code = f'{invite.code[:15]}...'
+                    invite.code = f'{invite.code[:7]}...'
                 text = f'• Joined using vanity invite: {invite.code} ({invite.uses} uses)'
             else:
                 text = 'I couldn\'t find who invited them'
