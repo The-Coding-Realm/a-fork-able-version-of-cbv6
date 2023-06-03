@@ -119,7 +119,7 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
         ------
         `{prefix}joke`: *will get a random joke*
         """
-        joke_json = await self.http.api["get"]["joke"]["api"]()
+        joke_json = await self.http.api["joke"]["api"]()
         
         parts = joke_json['type']
         
@@ -127,7 +127,7 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
 
             joke = joke_json['joke']
 
-            embed = self.bot.embed(
+            embed = await self.bot.embed(
                 title = "Here's a joke for you:",
                 description = joke,
                 color = discord.Color.random()
@@ -139,7 +139,7 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
             setup = joke_json['setup']
             delivery = joke_json['delivery']
         
-            embed = self.bot.embed(
+            embed = await self.bot.embed(
                 title = "Here's a joke for you:",
                 description = f"{setup}\n\n||{delivery}||",
                 color = discord.Color.random()

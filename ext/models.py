@@ -334,7 +334,7 @@ class CodingBot(commands.Bot):
             }
         )
         super().__init__(
-            command_prefix=[')'], intents=INTENTS, case_insensitive=True,
+            command_prefix=['>'], intents=INTENTS, case_insensitive=True,
             help_command=help_command
         )
         self.conn: Database = discord.utils.MISSING
@@ -360,6 +360,7 @@ class CodingBot(commands.Bot):
             579041484796461076, # Conch.py
             687882857171255309, # Lexionas74
             462067035556282378, # Gxpy
+            748053138354864229, # Ayu
         ]
 
     async def setup_hook(self) -> None:
