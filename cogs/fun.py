@@ -31,9 +31,11 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
         user: discord.Member
     ):
         """
-        See your or mentioned user's pp
-        Example: {prefix}pp @user
-        Example: {prefix}pp
+        Throw someone in the trash
+        Usage:
+        ------
+        `{prefix}trash <user>`
+
         """
         resp1 = await ctx.author.display_avatar.read()
         resp2 = await user.display_avatar.read()
@@ -45,6 +47,14 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
     
     @commands.hybrid_command()
     async def rock(self, ctx: commands.Context[CodingBot], *, query: Optional[str] = None):
+        """
+        Get a random rock
+        Usage:
+        ------
+        `{prefix}rock`: *will get a random rock*
+        `{prefix}rock [rock]`: *will get the [rock]*
+
+        """
         rock_info = await get_rock(self)
         return await self.bot.reply(
             ctx,
@@ -161,27 +171,27 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
         await self.bot.reply(ctx, embed=embed)
 
-    @commands.hybrid_command(name="animal")
-    async def animal(self, ctx: commands.Context[CodingBot], animal: Optional[str] = None):
-        options = ("dog", "cat", "panda", "fox", "red_panda", "koala", "bird", "raccoon", "kangaroo")
-        if (not animal) or (animal and animal not in options):
-            animal = random.choice(options)
+    # @commands.hybrid_command(name="animal")
+    # async def animal(self, ctx: commands.Context[CodingBot], animal: Optional[str] = None):
+    #     options = ("dog", "cat", "panda", "fox", "red_panda", "koala", "bird", "raccoon", "kangaroo")
+    #     if (not animal) or (animal and animal not in options):
+    #         animal = random.choice(options)
 
-        response = await self.http.api["some-random-api"]["animal"](animal)
-        if response.status in range(200,300):
-            json = await response.json()
+    #     response = await self.http.api["some-random-api"]["animal"](animal)
+    #     if response.status in range(200,300):
+    #         json = await response.json()
 
-            image = json["image"]
-            fact = json["fact"]
+    #         image = json["image"]
+    #         fact = json["fact"]
 
-            embed = discord.Embed(title="Here's the animal image you asked.", color=discord.Color.random())
-            embed.set_image(url=image)
-            embed.set_footer(text=fact)
-        else:
-            embed = discord.Embed(title="ERROR!",  description=f"Received a bad status code of {response.status}")
-            embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #         embed = discord.Embed(title="Here's the animal image you asked.", color=discord.Color.random())
+    #         embed.set_image(url=image)
+    #         embed.set_footer(text=fact)
+    #     else:
+    #         embed = discord.Embed(title="ERROR!",  description=f"Received a bad status code of {response.status}")
+    #         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
         
-        await self.bot.reply(ctx,embed=embed)
+    #     await self.bot.reply(ctx,embed=embed)
 
     @commands.hybrid_group(invoke_without_command=True)
     async def binary(self, ctx: commands.Context[CodingBot]):
@@ -209,31 +219,31 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
 
         await self.bot.reply(ctx,embed=embed)
 
-    @commands.hybrid_command(name="lyrics")
-    async def lyrics(self, ctx: commands.Context[CodingBot], *, query: str = None):
-        if not query:
-            embed = discord.Embed(title = "Hey! I'm confused", description=f"You must provide a search argument or I couldn't find the lyrics")
-            embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    # @commands.hybrid_command(name="lyrics")
+    # async def lyrics(self, ctx: commands.Context[CodingBot], *, query: str = None):
+    #     if not query:
+    #         embed = discord.Embed(title = "Hey! I'm confused", description=f"You must provide a search argument or I couldn't find the lyrics")
+    #         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
 
-        response = await self.http.api["some-random-api"]["lyrics"](query)
-        if response.status in range(200, 300):
-            json = await response.json()
+    #     response = await self.http.api["some-random-api"]["lyrics"](query)
+    #     if response.status in range(200, 300):
+    #         json = await response.json()
             
-            lyrics = json['lyrics']
-            artist = json['author']
-            title = json['title']
-            thumbnail = json['thumbnail']['genius']
+    #         lyrics = json['lyrics']
+    #         artist = json['author']
+    #         title = json['title']
+    #         thumbnail = json['thumbnail']['genius']
 
-            for chunk in wrap(lyrics, 4096, replace_whitespace = False):
-                embed = discord.Embed(title = f"{artist} - {title}", description = chunk, color=discord.Color.random())
-                embed.set_thumbnail(url=thumbnail)
-                embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #         for chunk in wrap(lyrics, 4096, replace_whitespace = False):
+    #             embed = discord.Embed(title = f"{artist} - {title}", description = chunk, color=discord.Color.random())
+    #             embed.set_thumbnail(url=thumbnail)
+    #             embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
 
-        else:
-            embed = discord.Embed(title="ERROR!",  description=f"Received a bad status code of {response.status}")
-            embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #     else:
+    #         embed = discord.Embed(title="ERROR!",  description=f"Received a bad status code of {response.status}")
+    #         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
 
-        await self.bot.reply(ctx,embed=embed)
+    #     await self.bot.reply(ctx,embed=embed)
         
     @commands.hybrid_command(name="reverse")
     async def reverse(self, ctx: commands.Context[CodingBot], *, text: str):
@@ -248,75 +258,75 @@ class Fun(commands.Cog, command_attrs=dict(hidden=False)):
         await self.bot.reply(ctx,embed=embed)
 
     # Filters command
-    @commands.hybrid_group(invoke_without_command=True)
-    async def filter(self, ctx: commands.Context[CodingBot]):
-        embed = discord.Embed(title="Filter command", description="Available methods: `invert`, `greyscale`, `colour [hex]`", color=discord.Color.random())
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
-        await self.bot.reply(ctx,embed=embed)
+    # @commands.hybrid_group(invoke_without_command=True)
+    # async def filter(self, ctx: commands.Context[CodingBot]):
+    #     embed = discord.Embed(title="Filter command", description="Available methods: `invert`, `greyscale`, `colour [hex]`", color=discord.Color.random())
+    #     embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #     await self.bot.reply(ctx,embed=embed)
 
-    @filter.command(name="invert")
-    async def filter_invert(self, ctx: commands.Context[CodingBot], member: discord.Member = None):
-        if not member:
-            member = ctx.author
-        pfp = member.display_avatar.url
-        response = await self.http.api["some-random-api"]["filters"]["invert"](pfp)
+    # @filter.command(name="invert")
+    # async def filter_invert(self, ctx: commands.Context[CodingBot], member: discord.Member = None):
+    #     if not member:
+    #         member = ctx.author
+    #     pfp = member.display_avatar.url
+    #     response = await self.http.api["some-random-api"]["filters"]["invert"](pfp)
 
-        embed = discord.Embed(title="Filter command - Invert", color=discord.Color.random())
-        embed.set_image(url=response)
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
-        await self.bot.reply(ctx,embed=embed)
+    #     embed = discord.Embed(title="Filter command - Invert", color=discord.Color.random())
+    #     embed.set_image(url=response)
+    #     embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #     await self.bot.reply(ctx,embed=embed)
 
-    @filter.command(name="greyscale")
-    async def filter_greyscale(self, ctx: commands.Context[CodingBot], member: discord.Member = None):
-        if not member:
-            member = ctx.author
-        pfp = member.display_avatar.url
-        response = await self.http.api["some-random-api"]["filters"]["greyscale"](pfp)
+    # @filter.command(name="greyscale")
+    # async def filter_greyscale(self, ctx: commands.Context[CodingBot], member: discord.Member = None):
+    #     if not member:
+    #         member = ctx.author
+    #     pfp = member.display_avatar.url
+    #     response = await self.http.api["some-random-api"]["filters"]["greyscale"](pfp)
 
-        embed = discord.Embed(title="Filter command - Greyscale", color=discord.Color.random())
-        embed.set_image(url=response)
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
-        await self.bot.reply(ctx,embed=embed)
+    #     embed = discord.Embed(title="Filter command - Greyscale", color=discord.Color.random())
+    #     embed.set_image(url=response)
+    #     embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #     await self.bot.reply(ctx,embed=embed)
 
-    @filter.command(name="colour")
-    async def filter_colour(self, ctx: commands.Context[CodingBot], member: discord.Member = None, hex_code: str = None):
-        if not member:
-            member = ctx.author
-        if not hex_code:
-            embed = discord.Embed(title="ERROR!",  description="No Hex? Hex colour code is required")
-            embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
-        hex_code = hex_code.replace('#', '')
-        pfp = member.display_avatar.url
-        response = await self.http.api["some-random-api"]["filters"]["greyscale"](pfp, hex_code)
+    # @filter.command(name="colour")
+    # async def filter_colour(self, ctx: commands.Context[CodingBot], member: discord.Member = None, hex_code: str = None):
+    #     if not member:
+    #         member = ctx.author
+    #     if not hex_code:
+    #         embed = discord.Embed(title="ERROR!",  description="No Hex? Hex colour code is required")
+    #         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #     hex_code = hex_code.replace('#', '')
+    #     pfp = member.display_avatar.url
+    #     response = await self.http.api["some-random-api"]["filters"]["greyscale"](pfp, hex_code)
 
-        embed = discord.Embed(title="Filter command - Colour", color=discord.Color.random())
-        embed.set_image(url=response)
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
-        await self.bot.reply(ctx,embed=embed)
+    #     embed = discord.Embed(title="Filter command - Colour", color=discord.Color.random())
+    #     embed.set_image(url=response)
+    #     embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #     await self.bot.reply(ctx,embed=embed)
 
-    @filter.command(name="brightness")
-    async def filter_brightness(self, ctx: commands.Context[CodingBot], member: discord.Member = None):
-        if not member:
-            member = ctx.author
-        pfp = member.display_avatar.url
-        response = await self.http.api["some-random-api"]["filters"]["brightness"](pfp)
+    # @filter.command(name="brightness")
+    # async def filter_brightness(self, ctx: commands.Context[CodingBot], member: discord.Member = None):
+    #     if not member:
+    #         member = ctx.author
+    #     pfp = member.display_avatar.url
+    #     response = await self.http.api["some-random-api"]["filters"]["brightness"](pfp)
 
-        embed = discord.Embed(title="Filter command - Brightness", color=discord.Color.random())
-        embed.set_image(url=response)
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
-        await self.bot.reply(ctx,embed=embed)
+    #     embed = discord.Embed(title="Filter command - Brightness", color=discord.Color.random())
+    #     embed.set_image(url=response)
+    #     embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #     await self.bot.reply(ctx,embed=embed)
 
-    @filter.command(name="threshold")
-    async def filter_threshold(self, ctx: commands.Context[CodingBot], member: discord.Member = None):
-        if not member:
-            member = ctx.author
-        pfp = member.display_avatar.url
-        response = await self.http.api["some-random-api"]["filters"]["threshold"](pfp)
+    # @filter.command(name="threshold")
+    # async def filter_threshold(self, ctx: commands.Context[CodingBot], member: discord.Member = None):
+    #     if not member:
+    #         member = ctx.author
+    #     pfp = member.display_avatar.url
+    #     response = await self.http.api["some-random-api"]["filters"]["threshold"](pfp)
 
-        embed = discord.Embed(title="Filter command - Threshold", color=discord.Color.random())
-        embed.set_image(url=response)
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
-        await self.bot.reply(ctx,embed=embed)
+    #     embed = discord.Embed(title="Filter command - Threshold", color=discord.Color.random())
+    #     embed.set_image(url=response)
+    #     embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+    #     await self.bot.reply(ctx,embed=embed)
 
 async def setup(bot: CodingBot):
     await bot.add_cog(Fun(bot))
